@@ -1,0 +1,2 @@
+-- SQLite
+CREATE TABLE historytwo (id INTEGER, username_id INTEGER, games_id INTEGER, h_results_id INTEGER, bet_name TEXT, bet_amount NUMERIC, transaction_date DATETIME, odds NUMERIC, potential_payout NUMERIC, home_team_history TEXT, away_team_history TEXT, match_date DATE, winner BOOL, FOREIGN KEY (username_id) REFERENCES users (id), FOREIGN KEY (games_id) REFERENCES games (id) FOREIGN KEY (h_results_id) REFERENCES results (id), PRIMARY KEY (id));

@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block main %}
+<div class="soccer-overlook">
+    <div class="img-area-left-soccer">
+        <div class="img-left-soccer">
+            <img src="static/manc.png" clas="manc">
+            <img src="static/liverpool.png" class="liverpool">
+            <img src="static/arsenal.png" class="arsenal">
+            <img src="static/astonvilla.png" class="aston">
+            <img src="static/leicester.png" class="leicester">
+            <img src="static/brentford.png" class="brentford">
+            <img src="static/wolves.png" class="wolves">
+            <img src="static/watford.png" class="watford">
+            <img src="static/southampton.png" class="southampton">
+            <img src="static/leeds.png" class="leeds">
+        </div>
+    </div>
+    <div class="img-area-right-soccer">
+        <div class="img-right-soccer">
+            <img src="static/chelsea.png" class="chelsea">
+            <img src="static/manu.png" class="manu">
+            <img src="static/everton.png" class="everton">
+            <img src="static/westham.png" class="westham">
+            <img src="static/crystal.png" class="crystal">
+            <img src="static/spurs.png" class="spurs">
+            <img src="static/brighton.png" class="brighton">
+            <img src="static/newcastle.png" class="newcastle">
+            <img src="static/norwich.png" class="norwich">
+            <img src="static/burnley.png" class="burnley">
+        </div>
+    </div>
+    <div class="resultsbg">
+        <div class="soccer-header results-header">
+            <h1>Game Results</h1>
+        </div>
+        <p class="results-p-small"><small>Disclaimer: All match dates here are in the UTC time zone, to view the match date and time for your location please click <a rel="noreferrer noopener" target="_blank" style=" text-decoration: underline; color: blue;" href="https://www.google.com/search?q=premier+league+&rlz=1C1UEAD_en-GBAU943AU943&sxsrf=AOaemvLfnFa21H4ymhBHDAiXlmYVuphB0g%3A1636794434162&ei=QoCPYYr5CJn6rQG0o5HYCg&oq=premier+league+&gs_lcp=Cgdnd3Mtd2l6EAMyBAgjECcyBAgjECcyBAgjECcyBAgAEEMyCAgAEIAEELEDMggIABCABBCxAzIICAAQgAQQsQMyBQgAEIAEMggIABCABBCxAzIICAAQgAQQsQM6BwgAEEcQsAM6BwgAELADEEM6CgguEMgDELADEENKBQg4EgExSgQIQRgAUM0BWM0BYM0DaAJwAngAgAGaAYgBmgGSAQMwLjGYAQCgAQHIAQ_AAQE&sclient=gws-wiz&ved=0ahUKEwiKosW2_pT0AhUZfSsKHbRRBKsQ4dUDCA8&uact=5#sie=lg;/g/11p44qhs93;2;/m/02_tc;mt;fp;1;;">here</a>.</small></p>
+
+        {% for result_html in results_html %}
+        <h3 class="results-h3">{{ result_html[4] }}</h3>
+        <div class="match-container">
+            <div class="club-display">
+                <span class="team-a">{{ result_html[0] }}</span>
+                {% if result_html[0] == "Southampton" %}
+                    <img src="/static/southampton.png" id="southampton" class="results-flag">
+                {% elif result_html[0] == "Man City" %}
+                    <img src="/static/manc.png" class="results-flag" >
+                {% elif result_html[0] == "Liverpool" %}
+                    <img src="/static/liverpool.png" id="liverpool" class="results-flag">
+                {% elif result_html[0] == "Arsenal" %}
+                    <img src="/static/arsenal.png" class="results-flag">
+                {% elif result_html[0] == "Aston Villa" %}
+                    <img src="/static/astonvilla.png" id="aston" class="results-flag">
+                {% elif result_html[0] == "Leicester City" %}
+                    <img src="/static/leicester.png" class="results-flag">
+                {% elif result_html[0] == "Brentford" %}
+                    <img src="/static/brentford.png" class="results-flag">
+                {% elif result_html[0] == "Wolves" %}
+                    <img src="/static/wolves.png" class="results-flag">
+                {% elif result_html[0] == "Watford" %}
+                    <img src="/static/watford.png" class="results-flag">
+                {% elif result_html[0] == "Leeds United" %}
+                    <img src="/static/leeds.png" class="results-flag">
+                {% elif result_html[0] == "Chelsea" %}
+                    <img src="/static/chelsea.png" class="results-flag">
+                {% elif result_html[0] == "Man United" %}
+                    <img src="/static/manu.png" class="results-flag">
+                {% elif result_html[0] == "Everton" %}
+                    <img src="/static/everton.png" class="results-flag">
+                {% elif result_html[0] == "West Ham" %}
+                    <img src="/static/westham.png" class="results-flag">
+                {% elif result_html[0] == "Crystal Palace" %}
+                    <img src="/static/crystal.png" class="results-flag">
+                {% elif result_html[0] == "Tottenham" %}
+                    <img src="/static/spurs.png"  id="spurs" class="results-flag">
+                {% elif result_html[0] == "Brighton" %}
+                    <img src="/static/brighton.png" class="results-flag">
+                {% elif result_html[0] == "Newcastle" %}
+                    <img src="/static/newcastle.png" class="results-flag">
+                {% elif result_html[0] == "Norwich City" %}
+                    <img src="/static/norwich.png" class="results-flag">
+                {% elif result_html[0] == "Burnley" %}
+                    <img src="/static/burnley.png" class="results-flag">
+                {% endif %}
+            </div>
+            <div class="score-display">
+                <div class="score-1">{{ result_html[2] }}</div>
+                <p>-</p>
+                <div class="score-2">{{ result_html[3] }}</div>
+            </div>
+            <div  class="club-display left">
+                <span class="team-a">{{ result_html[1] }}</span>
+                {% if result_html[1] == "Southampton" %}
+                    <img src="/static/southampton.png" id="southampton" class="results-flag">
+                {% elif result_html[1] == "Man City" %}
+                    <img src="/static/manc.png" class="results-flag" >
+                {% elif result_html[1] == "Liverpool" %}
+                    <img src="/static/liverpool.png" id="liverpool" class="results-flag">
+                {% elif result_html[1] == "Arsenal" %}
+                    <img src="/static/arsenal.png" class="results-flag">
+                {% elif result_html[1] == "Aston Villa" %}
+                    <img src="/static/astonvilla.png" id="aston" class="results-flag">
+                {% elif result_html[1] == "Leicester City" %}
+                    <img src="/static/leicester.png" class="results-flag">
+                {% elif result_html[1] == "Brentford" %}
+                    <img src="/static/brentford.png" class="results-flag">
+                {% elif result_html[1] == "Wolves" %}
+                    <img src="/static/wolves.png" class="results-flag">
+                {% elif result_html[1] == "Watford" %}
+                    <img src="/static/watford.png" class="results-flag">
+                {% elif result_html[1] == "Leeds United" %}
+                    <img src="/static/leeds.png" class="results-flag">
+                {% elif result_html[1] == "Chelsea" %}
+                    <img src="/static/chelsea.png" class="results-flag">
+                {% elif result_html[1] == "Man United" %}
+                    <img src="/static/manu.png" class="results-flag">
+                {% elif result_html[1] == "Everton" %}
+                    <img src="/static/everton.png" class="results-flag">
+                {% elif result_html[1] == "West Ham" %}
+                    <img src="/static/westham.png" class="results-flag">
+                {% elif result_html[1] == "Crystal Palace" %}
+                    <img src="/static/crystal.png" class="results-flag">
+                {% elif result_html[1] == "Tottenham" %}
+                    <img src="/static/spurs.png"  id="spurs" class="results-flag">
+                {% elif result_html[1] == "Brighton" %}
+                    <img src="/static/brighton.png" class="results-flag">
+                {% elif result_html[1] == "Newcastle" %}
+                    <img src="/static/newcastle.png" class="results-flag">
+                {% elif result_html[1] == "Norwich City" %}
+                    <img src="/static/norwich.png" class="results-flag">
+                {% elif result_html[1] == "Burnley" %}
+                    <img src="/static/burnley.png" class="results-flag">
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+{% endblock %}

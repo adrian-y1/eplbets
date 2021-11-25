@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Leaderboard
+{% endblock %}
+
+{% block main %}
+<div class="soccer-overlook">
+    <div class="img-area-left-soccer">
+        <div class="img-left-soccer">
+            <img src="static/manc.png" clas="manc">
+            <img src="static/liverpool.png" class="liverpool">
+            <img src="static/arsenal.png" class="arsenal">
+            <img src="static/astonvilla.png" class="aston">
+            <img src="static/leicester.png" class="leicester">
+            <img src="static/brentford.png" class="brentford">
+            <img src="static/wolves.png" class="wolves">
+            <img src="static/watford.png" class="watford">
+            <img src="static/southampton.png" class="southampton">
+            <img src="static/leeds.png" class="leeds">
+        </div>
+    </div>
+
+    <div class="img-area-right-soccer">
+        <div class="img-right-soccer">
+            <img src="static/chelsea.png" class="chelsea">
+            <img src="static/manu.png" class="manu">
+            <img src="static/everton.png" class="everton">
+            <img src="static/westham.png" class="westham">
+            <img src="static/crystal.png" class="crystal">
+            <img src="static/spurs.png" class="spurs">
+            <img src="static/brighton.png" class="brighton">
+            <img src="static/newcastle.png" class="newcastle">
+            <img src="static/norwich.png" class="norwich">
+            <img src="static/burnley.png" class="burnley">
+        </div>
+    </div>
+    <div class="tableCon">
+        <div class="soccer-header">
+            Leaderboard
+        </div>
+        <div class="rewards">
+            <div class="rewards-header">
+                <h2>🏆 Top 3 Ranking Rewards</h2>
+                <div class="rewards-cash">
+                    <p>🥇 $150</p>
+                    <p>🥈 $100</p>
+                    <p>🥉 $50 </p>
+                </div>
+                <p class="fyi1">Rankings are determined based on the user's total balance after the completion of each matchday of the English Premier League.</p>
+                <p class="fyi1">Place 3rd or higher on the leaderboard to earn rewards.</p>
+            </div>
+        </div>
+        {% if leaderboard_history == [] %}
+            <div class="leaderboard-p">
+                <p>No bets placed.</p>
+                <br>
+                <p>To enter the leaderboard and view the ranks, please place a <a class="leaderboard-a" href="/soccer">bet</a>.</p>
+            </div>
+        {% else %}
+        <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leaderboard_user in leaderboard_users %}
+                    {% if leaderboard_user[0] == session["username"] and leaderboard_user[1] == session["balance"] %}
+                    <tr id="tr" class="current_user">
+                            <td><b>{{ leaderboard_user[0] }}</b></td>
+                            <td><b>{{ leaderboard_user[1] | usd}}</b></td>
+                    </tr>
+                    {% else %}
+                    <tr id="tr">
+                        <td>{{ leaderboard_user[0] }}</td>
+                        <td>{{ leaderboard_user[1] | usd}}</td>
+                    </tr>
+                    {% endif %}  
+                    {% endfor %}
+                    {% endif %}
+                </tbody> 
+            </table>
+            <script>
+                var tables = document.getElementsByTagName('tbody');
+                var table = tables[tables.length -1];
+                var rows = table.rows;
+                for(var i = 0, td; i < rows.length; i++){
+                    td = document.createElement('td');
+                    td.appendChild(document.createTextNode(i + 1));
+                    rows[i].insertBefore(td, rows[i].firstChild);
+                    // if (i == 0){
+                    //     td.replaceChildren()
+                    //     td.appendChild(document.createTextNode('🥇'));
+                    // }
+                    // if (i == 1){
+                    //     td.replaceChildren()
+                    //     td.appendChild(document.createTextNode('🥈'));
+                    // }
+                    // if (i == 2){
+                    //     td.replaceChildren()
+                    //     td.appendChild(document.createTextNode('🥉'));
+                    // }
+
+                }
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}

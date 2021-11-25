@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Bets
+{% endblock %}
+
+{% block main %}
+<div class="soccer-overlook">
+    <div class="img-area-left-soccer">
+        <div class="img-left-soccer">
+            <img src="static/manc.png" clas="manc">
+            <img src="static/liverpool.png" class="liverpool">
+            <img src="static/arsenal.png" class="arsenal">
+            <img src="static/astonvilla.png" class="aston">
+            <img src="static/leicester.png" class="leicester">
+            <img src="static/brentford.png" class="brentford">
+            <img src="static/wolves.png" class="wolves">
+            <img src="static/watford.png" class="watford">
+            <img src="static/southampton.png" class="southampton">
+            <img src="static/leeds.png" class="leeds">
+        </div>
+    </div>
+    
+    <div class="img-area-right-soccer">
+        <div class="img-right-soccer">
+            <img src="static/chelsea.png" class="chelsea">
+            <img src="static/manu.png" class="manu">
+            <img src="static/everton.png" class="everton">
+            <img src="static/westham.png" class="westham">
+            <img src="static/crystal.png" class="crystal">
+            <img src="static/spurs.png" class="spurs">
+            <img src="static/brighton.png" class="brighton">
+            <img src="static/newcastle.png" class="newcastle">
+            <img src="static/norwich.png" class="norwich">
+            <img src="static/burnley.png" class="burnley">
+        </div>
+    </div>
+    <div class="indexbg">
+        <div class="soccer-header">
+            My Bets
+        </div>
+        <p style="padding: 2px;"><small>Disclaimer: Please refresh the page multiple times if you don't receive your payout after winning a bet.</small></p>
+        <div id="myBtnContainer" class="btnCon">
+            <div class="btnBg"></div>
+                <div class="slider"></div>
+                    <button class="button active" id="HOVER" onclick="filterSelection('pending'); left();">&#8987; Pending</button>
+                    <button class="button" onclick="filterSelection('resulted'); right();">&#9989; Resulted</button>
+                </div>
+            
+        {% if history_rows_index == [] %}
+        <div class="logo-move">
+            <div class="logo-index">
+                <p>&#9917epl<span style="color:yellow; font-weight: bold;">bets&#9917</span></p>
+            </div>
+        </div>
+        <div class="indexgetstarted">
+            <div>
+                <h1 class="index-header-getstarted1">Nothing Available</h1>
+                <h2 class="index-header-getstarted2">You have not placed any bets.</h2>
+                <h2 class="index-header-getstarted2">To place a bet or get started please click the following button!</h2>
+            </div>
+            <div class="getstarteddiv">
+                <a href="/soccer" class="getstarted">Get Started</a>
+            </div>
+        </div>
+        {% endif %}
+        <div class="box-index">
+            {% for history_row in history_rows_index %}
+            {% if history_row[9] != None %}
+            <div id="pending" class="index pending box-content-index">
+                <div id="pending" class="index pending box-content-index-bet">
+                    <p>{{ history_row[0] }}</p>
+                    <div id="pending" class="index pending box-content-index-odds">
+                        <p>{{ history_row[3] }}</p>
+                    </div>
+                </div>
+                <div id="pending" class="index pending box-content-index-match">
+                    <p>{{ history_row[5] }} &#127386 {{ history_row[6] }}</p>
+                    <div class="index pending box-content-index-date">
+                        <p>{{ history_row[7] }}</p>
+                    </div>
+                </div>
+                <div id="pending" class="index pending box-content-index-stake">
+                    <p>Stake:</p>
+                    <b>{{ history_row[1] | usd }}</b>
+                </div>
+                <div id="pending" class="index pending div-content-index-payout">
+                    <p>Potential Payout:</p>
+                    <b>{{ history_row[4] | usd }}</b>
+                </div>	
+                <div id="pending" class="index pending box-content-index-status">
+                    <p>Status:</p>
+                    {% if history_row[8] == 1 and history_row[9] != None %}
+                        <span style="color: green;">Won &#10004</span>
+                    {% elif history_row[8] == 0 and history_row[9] != None %}
+                        <span style="color: red;">Lost &#10060</span>
+                    {% endif %}
+                </div>
+                <div id="pending" class="index pending trans">
+                    {{ history_row[2] }}
+                    <p>Transaction Date</p>
+                </div>
+            </div>
+            {% else %}
+            <div class="index resulted box-content-index">
+                
+                <div class="index resulted box-content-index-bet">
+                    <p>{{ history_row[0] }}</p>
+                    <div class="resuled index resulted box-content-index-odds">
+                        <p>{{ history_row[3] }}</p>
+                    </div>
+                </div>
+
+                <div class="index resulted box-content-index-match">
+                    <p>{{ history_row[5] }} &#127386 {{ history_row[6] }}</p>
+                    <div class="index resulted box-content-index-date">
+                        <p>{{ history_row[7] }}</p>
+                    </div>
+                </div>
+                <div class="index resulted box-content-index-stake">
+                    <p>Stake:</p>
+                    <b>{{ history_row[1] | usd }}</b>
+                </div>
+                <div class="index resulted div-content-index-payout">
+                    <p>Potential Payout:</p>
+                    <b>{{ history_row[4] | usd }}</b>
+                </div>	
+                <div class="index resulted box-content-index-status">
+                    <p>Status:</p>
+                        pending
+                </div>
+                <div id="pending" class="index resulted trans">
+                    {{ history_row[2] }}
+                    <p>Transaction Date:</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    filterSelection("pending")
+    function filterSelection(c) {
+      var x, i;
+      x = document.getElementsByClassName("index");
+      for (i = 0; i < x.length; i++) {
+        w3RemoveClass(x[i], "show");
+        if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+      }
+    }
+    
+    function w3AddClass(element, name) {
+      var i, arr1, arr2;
+      arr1 = element.className.split(" ");
+      arr2 = name.split(" ");
+      for (i = 0; i < arr2.length; i++) {
+        if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+      }
+    }
+    
+    function w3RemoveClass(element, name) {
+      var i, arr1, arr2;
+      arr1 = element.className.split(" ");
+      arr2 = name.split(" ");
+      for (i = 0; i < arr2.length; i++) {
+        while (arr1.indexOf(arr2[i]) > -1) {
+          arr1.splice(arr1.indexOf(arr2[i]), 1);     
+        }
+      }
+      element.className = arr1.join(" ");
+    }
+    
+    // Add active class to the current button (highlight it)
+    var btnContainer = document.getElementById("myBtnContainer");
+    var btns = btnContainer.getElementsByClassName("button");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function(){
+        var current = document.getElementsByClassName("active");
+        current[0].className = current[0].className.replace(" active", "");
+        this.className += " active";
+      });
+    }
+    const slider = document.querySelector('.slider');
+    const right = () => {
+        slider.style.transform = 'translateX(100%)';
+    }
+    const left = () => {
+        slider.style.transform = 'translateX(0%)';
+    }
+</script>
+{% endblock %}
+

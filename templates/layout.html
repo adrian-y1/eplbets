@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, minimum-scale=1, width=device-width">
+        <link rel="icon" type="image/png" href="/static/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+        <link href="/static/styles.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+        <link href="http://fonts.cdnfonts.com/css/arial-rounded-mt-bold" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+
+    <body>
+        <nav>
+            {% if session.user_id %}
+            <div class="nav-left">
+                <a class="logo" href="/index">&#9917epl<span style="color:yellow; font-weight: bold;">bets&#9917</span></a>
+                <ul class="nav-links">
+                    <li><a class="nav-link" href="/index">My Bets</a></li>
+                    <li><a class="nav-link-" href="/soccer">Matches</a></li>
+                    <li><a href="/leaderboard" class="nav-link">Leaderboard</a></li>    
+                    <li><a class="nav-link" href="/results">Results</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <ul class="nav-linkss">
+                    <div id="myDropdown2" class="dropdown">
+                    <li>
+                        <button class="dropbtn" onclick="document.getElementById('myDropdown').style.display='block'">
+                            <li id="dropdown-balance">
+                                <p>
+                                    
+                                        {{ session["balance"] | usd}}
+                                    
+                                </p>
+                                <img class="dropdown-img" src="/static/avatar5.png" alt="">
+                            </li>
+                        </button>
+                    </li>
+                        <div class="dropdown-content" id="myDropdown">
+                            <div class="dropdown-content1">
+                                <img class="dropdown-content-img" src="/static/avatar5.png" alt="">
+                                <a href="#" class="nav-link" style="color: dodgerblue;">{{ session["username"] }}</a>
+                                <a href="#" class="nav-link" >{{ session["balance"]  | usd}}</a>
+                            </div>
+                            <div class="dropdown-content2">
+                               <a class="nav-link" id="logout" href="/logout"><i class="fa fa-sign-out"> Log Out</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+            {% else %}
+            <a class="logo" href="/">&#9917epl<span style="color:yellow;font-weight: bold;">bets&#9917</span></a>
+            <div class="nav-right login-nav-right">
+                <ul class="nav-linkss">
+                    <li><a class="nav-link" href="/register"><button class="btn-register">Join Now</button></a></li>
+                    <li><a class="nav-link login" href="/login">Log In</a></li>
+                </ul>
+            </div>
+            {% endif %}
+        </nav>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <header>
+                {% for category, message in messages %}
+                <div class="{{ category }}" role="alert">
+                    <!-- {{ get_flashed_messages() | join(" ") }} -->
+                    {{ message }}
+                    <i class="close" onclick=delete_flash(this)>&times;</i>
+                    {% endfor %}
+                </div>
+            </header>
+        {% endif %}
+        {% endwith %}
+        <main class="container">
+            {% block main %}{% endblock %}
+        </main>
+        
+
+        <div class="footer">
+            <footer>
+                <p class="footer-p-layout">Data provided for free by <a href="https://serpapi.com/?gclid=CjwKCAiAs92MBhAXEiwAXTi250gOYFMGhpjYIHuaHpi_iLoxLRr40Vjztu4WgpDrHW3BEyiNinIaghoCTiQQAvD_BwE">SerpApi</a> and <a href="https://the-odds-api.com/">The Odds Api</a>. Thank you!</p>
+                <p style="padding-top: 5px;"class="footer-p-layout">The odds provided are from the popular Australian bookmaker, <a href="https://www.sportsbet.com.au/">Sportsbet</a>.</p>
+                <div class="socialmedia">
+                    <a href="https://twitter.com/Y_adrian1" class="fa fa-twitter" target="_blank"></a>
+                    <a href="https://www.instagram.com/adrian_yonan1/" class="fa fa-instagram" target="_blank"></a>
+                    <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.snapchat.com%2Fadd%2Fadrianyonan%3Ffbclid%3DIwAR1ENCIBh0OzcpXtuVtOj9u-Cj1Ys9JaSDbcSF4DDranIUyKTQiQGojEm4E&h=AT34I_o5m1E1ew--Jx1fNwy9t6WInU_6YPLLer1NGbRT7z_kkrbDrps-ueONNXM1admnxp6uNVrzhZ5Sf1u5yZ6nhh6V5E-qEsqA7QcXOicwEei1uCJ4Cy-djw4_3mv9oR1oZA" class="fa fa-snapchat-ghost" target="_blank"></a>
+                </div>
+                <a href="https://discordapp.com/users/244605817276334080/" class="fab fa-discord"></a>
+            </footer>
+        </div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <script>
+        function delete_flash(flash){
+            $(flash).parent().remove()
+        }
+        window.addEventListener('mouseup',function(event){
+                var pol = document.getElementById('myDropdown');
+                if(event.target != pol && event.target.parentNode != pol){
+                    pol.style.display = 'none';
+                }
+        });  
+
+        const navSlide = () => {
+            const burger = document.querySelector('.burger');
+            const nav = document.querySelector('.nav-links');
+            const navLinks = document.querySelectorAll('.nav-links li');
+            // toggle div
+            burger.addEventListener('click', ()=>{
+                nav.classList.toggle('nav-active')
+            // animate div
+                navLinks.forEach((link, index) => {
+                    if(link.style.animation){
+                        link.style.animation = ''
+                    }
+                    else{
+                        link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.5}s`;
+                    }
+                });
+
+                // burger animation
+                burger.classList.toggle('toggle');
+            });
+        }
+        navSlide();
+        // $(document).ready(function(){
+        //     // Show hide popover
+        //     $(".dropdown").click(function(){
+        //         $(this).find(".dropdown-content").slideToggle("slow");
+        //     });
+        // });
+        // $(document).on("click", function(event){
+        //     var $trigger = $(".dropdown");
+        //     if($trigger !== event.target && !$trigger.has(event.target).length){
+        //         $(".dropdown-content").slideUp("fast");
+        //     }            
+        // });
+    </script>
+</html>

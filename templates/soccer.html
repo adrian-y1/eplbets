@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Matches
+{% endblock %}
+
+{% block main %}
+<div class="soccer-overlook">
+    <div class="img-area-left-soccer">
+        <div class="img-left-soccer">
+            <img src="static/manc.png" clas="manc">
+            <img src="static/liverpool.png" class="liverpool">
+            <img src="static/arsenal.png" class="arsenal">
+            <img src="static/astonvilla.png" class="aston">
+            <img src="static/leicester.png" class="leicester">
+            <img src="static/brentford.png" class="brentford">
+            <img src="static/wolves.png" class="wolves">
+            <img src="static/watford.png" class="watford">
+            <img src="static/southampton.png" class="southampton">
+            <img src="static/leeds.png" class="leeds">
+        </div>
+    </div>
+
+    <div class="img-area-right-soccer">
+        <div class="img-right-soccer">
+            <img src="static/chelsea.png" class="chelsea">
+            <img src="static/manu.png" class="manu">
+            <img src="static/everton.png" class="everton">
+            <img src="static/westham.png" class="westham">
+            <img src="static/crystal.png" class="crystal">
+            <img src="static/spurs.png" class="spurs">
+            <img src="static/brighton.png" class="brighton">
+            <img src="static/newcastle.png" class="newcastle">
+            <img src="static/norwich.png" class="norwich">
+            <img src="static/burnley.png" class="burnley">
+        </div>
+    </div>
+    <div class="soccerbg">
+        <div class="soccer-header">
+            Upcoming EPL Games
+        </div>
+        <p class="soccer-p"><small>Disclaimer: All match dates here are in the UTC time zone, to view the match date and time for your location please click <a rel="noreferrer noopener" target="_blank" style=" text-decoration: underline; font-size: 14px; color: blue;" href="https://www.google.com/search?q=premier+league+&rlz=1C1UEAD_en-GBAU943AU943&sxsrf=AOaemvLfnFa21H4ymhBHDAiXlmYVuphB0g%3A1636794434162&ei=QoCPYYr5CJn6rQG0o5HYCg&oq=premier+league+&gs_lcp=Cgdnd3Mtd2l6EAMyBAgjECcyBAgjECcyBAgjECcyBAgAEEMyCAgAEIAEELEDMggIABCABBCxAzIICAAQgAQQsQMyBQgAEIAEMggIABCABBCxAzIICAAQgAQQsQM6BwgAEEcQsAM6BwgAELADEEM6CgguEMgDELADEENKBQg4EgExSgQIQRgAUM0BWM0BYM0DaAJwAngAgAGaAYgBmgGSAQMwLjGYAQCgAQHIAQ_AAQE&sclient=gws-wiz&ved=0ahUKEwiKosW2_pT0AhUZfSsKHbRRBKsQ4dUDCA8&uact=5#sie=lg;/g/11p44qhs93;2;/m/02_tc;mt;fp;1;;">here</a>.</small></p>
+
+        <div class="box">
+            {% for matches_list in matches_list %}
+            <div class="box-content">
+                <div class="box-content-teams">
+                    {{ matches_list[0] }} v {{ matches_list[1] }}
+                </div>
+                <div class="box-content-date">
+                    <i id="futbol" class="fa fa-soccer-ball-o"></i>
+                    <p> {{ matches_list[3] }}</p>
+                </div>
+
+                <form action="/soccer" method="POST">
+                    <div class="box-content-buttons">
+                        <button type="submit" name="home" class="button" value="{{ matches_list[0] }}|{{ matches_list[1] }}|{{ matches_list[3] }}|{{ matches_list[4] }}">
+                            <span class="button-img">
+                            {% if matches_list[0] == "Southampton" %}
+                                <img src="/static/southampton.png">
+                            {% elif matches_list[0] == "Man City" %}
+                                <img src="/static/manc.png">
+                            {% elif matches_list[0] == "Liverpool" %}
+                                <img src="/static/liverpool.png">
+                            {% elif matches_list[0] == "Arsenal" %}
+                                <img src="/static/arsenal.png">
+                            {% elif matches_list[0] == "Aston Villa" %}
+                                <img src="/static/astonvilla.png">
+                            {% elif matches_list[0] == "Leicester City" %}
+                                <img src="/static/leicester.png">
+                            {% elif matches_list[0] == "Brentford" %}
+                                <img src="/static/brentford.png">
+                            {% elif matches_list[0] == "Wolves" %}
+                                <img src="/static/wolves.png">
+                            {% elif matches_list[0] == "Watford" %}
+                                <img src="/static/watford.png">
+                            {% elif matches_list[0] == "Leeds United" %}
+                                <img src="/static/leeds.png">
+                            {% elif matches_list[0] == "Chelsea" %}
+                                <img src="/static/chelsea.png">
+                            {% elif matches_list[0] == "Man United" %}
+                                <img src="/static/manu.png">
+                            {% elif matches_list[0] == "Everton" %}
+                                <img src="/static/everton.png">
+                            {% elif matches_list[0] == "West Ham" %}
+                                <img src="/static/westham.png">
+                            {% elif matches_list[0] == "Crystal Palace" %}
+                                <img src="/static/crystal.png">
+                            {% elif matches_list[0] == "Tottenham" %}
+                                <img src="/static/spurs.png" class="spurs-draw">
+                            {% elif matches_list[0] == "Brighton" %}
+                                <img src="/static/brighton.png">
+                            {% elif matches_list[0] == "Newcastle" %}
+                                <img src="/static/newcastle.png">
+                            {% elif matches_list[0] == "Norwich City" %}
+                                <img src="/static/norwich.png">
+                            {% elif matches_list[0] == "Burnley" %}
+                                <img src="/static/burnley.png">
+                            {% endif %}
+                            </span>
+                            <span class="button-text">
+                                {{ matches_list[0] }}
+                                <span class="button-price">
+                                    {{ matches_list[4] }}
+                                </span>
+                            </span>
+                        </button>
+                        <button type="submit" name="draw" class="button" value="{{ matches_list[2] }}|{{ matches_list[0] }}|{{ matches_list[1] }}|{{ matches_list[3] }}|{{ matches_list[6] }}">
+                            <span class="button-img-draw">
+                                <img src="/static/southampton.png" alt="" hidden>
+                            </span>
+                            <span class="button-text-draw">
+                                {{ matches_list[2] }}
+                                <span class="button-price-draw">
+                                    {{ matches_list[6] }}
+                                </span>
+                            </span>
+                        </button>
+                        <button type="submit" name="away" class="button" value="{{ matches_list[1] }}|{{ matches_list[0] }}|{{ matches_list[3] }}|{{ matches_list[5] }}">
+                            <span class="button-text">
+                                {{ matches_list[1] }}
+                                <span class="button-price">
+                                    {{ matches_list[5] }}
+                                </span>
+                            </span>
+                            <span class="button-img">
+                                {% if matches_list[1] == "Southampton" %}
+                                    <img src="/static/southampton.png">
+                                {% elif matches_list[1] == "Man City" %}
+                                    <img src="/static/manc.png">
+                                {% elif matches_list[1] == "Liverpool" %}
+                                    <img src="/static/liverpool.png">
+                                {% elif matches_list[1] == "Arsenal" %}
+                                    <img src="/static/arsenal.png">
+                                {% elif matches_list[1] == "Aston Villa" %}
+                                    <img src="/static/astonvilla.png">
+                                {% elif matches_list[1] == "Leicester City" %}
+                                    <img src="/static/leicester.png">
+                                {% elif matches_list[1] == "Brentford" %}
+                                    <img src="/static/brentford.png">
+                                {% elif matches_list[1] == "Wolves" %}
+                                    <img src="/static/wolves.png">
+                                {% elif matches_list[1] == "Watford" %}
+                                    <img src="/static/watford.png">
+                                {% elif matches_list[1] == "Leeds United" %}
+                                    <img src="/static/leeds.png">
+                                {% elif matches_list[1] == "Chelsea" %}
+                                    <img src="/static/chelsea.png">
+                                {% elif matches_list[1] == "Man United" %}
+                                    <img src="/static/manu.png">
+                                {% elif matches_list[1] == "Everton" %}
+                                    <img src="/static/everton.png">
+                                {% elif matches_list[1] == "West Ham" %}
+                                    <img src="/static/westham.png">
+                                {% elif matches_list[1] == "Crystal Palace" %}
+                                    <img src="/static/crystal.png">
+                                {% elif matches_list[1] == "Tottenham" %}
+                                    <img src="/static/spurs.png" class="spurs-draw">
+                                {% elif matches_list[1] == "Brighton" %}
+                                    <img src="/static/brighton.png">
+                                {% elif matches_list[1] == "Newcastle" %}
+                                    <img src="/static/newcastle.png">
+                                {% elif matches_list[1] == "Norwich City" %}
+                                    <img src="/static/norwich.png">
+                                {% elif matches_list[1] == "Burnley" %}
+                                    <img src="/static/burnley.png">
+                                {% endif %}
+                                </span>
+                            
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block main %}
+    <!-- {% if chosen_bet == "Southampton" %}
+        <img src="static/southampton_team.jpeg" class="checkoutbg">
+    {% elif chosen_bet == "Man City" %}
+        <img src="static/epl_img.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Liverpool" %}
+        <img src="static/liverpool_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Arsenal" %}
+        <img src="static/arsenal_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Aston Villa" %}
+        <img src="static/aston_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Leicester City" %}
+        <img src="static/leicester_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Brentford" %}
+        <img src="static/brentford_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Wolves" %}
+        <img src="static/wolves_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Watford" %}
+        <img src="static/watford_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Leeds United" %}
+        <img src="static/leeds_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Chelsea" %}
+        <img src="static/chelsea_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Man United" %}
+        <img src="static/manu_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Everton" %}
+        <img src="static/everton_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "West Ham" %}
+        <img src="static/westham_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Crystal Palace" %}
+        <img src="static/crystal_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Tottenham" %}
+        <img src="static/spurs_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Brighton" %}
+        <img src="static/brighton_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Newcastle" %}
+        <img src="static/newcastle_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Norwich City" %}
+        <img src="static/norwich_team.jpg" class="checkoutbg">
+    {% elif chosen_bet == "Burnley" %}
+        <img src="static/burnley_team.jpg" class="checkoutbg">
+    {% else %}
+        <img src="static/epl_img.jpg" class="checkoutbg">
+    {% endif %} -->
+<div class="loginbg">
+    <div class="loginbox">
+        <div class="box-checkout checkout-boxx">
+            <div class="box-content-checkout">
+                <div class="checkout-img">
+                    {% if chosen_bet == "Southampton" %}
+                        <img src="/static/southampton.png">
+                    {% elif chosen_bet == "Man City" %}
+                        <img src="/static/manc.png">
+                    {% elif chosen_bet == "Liverpool" %}
+                        <img src="/static/liverpool.png">
+                    {% elif chosen_bet == "Arsenal" %}
+                        <img src="/static/arsenal.png">
+                    {% elif chosen_bet == "Aston Villa" %}
+                        <img src="/static/astonvilla.png">
+                    {% elif chosen_bet == "Leicester City" %}
+                        <img src="/static/leicester.png">
+                    {% elif chosen_bet == "Brentford" %}
+                        <img src="/static/brentford.png">
+                    {% elif chosen_bet == "Wolves" %}
+                        <img src="/static/wolves.png">
+                    {% elif chosen_bet == "Watford" %}
+                        <img src="/static/watford.png">
+                    {% elif chosen_bet == "Leeds United" %}
+                        <img src="/static/leeds.png">
+                    {% elif chosen_bet == "Chelsea" %}
+                        <img src="/static/chelsea.png">
+                    {% elif chosen_bet == "Man United" %}
+                        <img src="/static/manu.png">
+                    {% elif chosen_bet == "Everton" %}
+                        <img src="/static/everton.png">
+                    {% elif chosen_bet == "West Ham" %}
+                        <img src="/static/westham.png">
+                    {% elif chosen_bet == "Crystal Palace" %}
+                        <img src="/static/crystal.png">
+                    {% elif chosen_bet == "Tottenham" %}
+                        <img src="/static/spurs.png" class="spurs-draw">
+                    {% elif chosen_bet == "Brighton" %}
+                        <img src="/static/brighton.png">
+                    {% elif chosen_bet == "Newcastle" %}
+                        <img src="/static/newcastle.png">
+                    {% elif chosen_bet == "Norwich City" %}
+                        <img src="/static/norwich.png">
+                    {% elif chosen_bet == "Burnley" %}
+                        <img src="/static/burnley.png">
+                    {% else %}
+                        <i style="margin: auto; font-size: 35px; color: black;"class="fa fa-shopping-cart"></i>
+                    {% endif %}
+                </div>
+                <div class="checkout-header">
+                    <h1>Checkout</h1>
+                </div>
+                <i id="futbol" class="fa fa-soccer-ball-o"></i>
+                {% if home_data %}
+                <div class="box-content-checkout-team">
+                    {{ chosen_bet }}
+                    <div class="box-content-checkout-team-odds">
+                        {{ home_data.split("|")[3] }}
+                    </div>
+                </div>
+                <div class="bettype">
+                    Win
+                </div>
+                <div class="box-content-checkout-match">
+                    {{ chosen_bet }} v {{ home_data.split("|")[1] }}
+                </div>
+                <div class="box-content-checkout-date">
+                    {{ home_data.split("|")[2] }}
+                </div>
+                {% elif draw_data %}
+                <div class="box-content-checkout-team">
+                    {{ chosen_bet }}
+                    <div class="box-content-checkout-team-odds">
+                        {{ draw_data.split("|")[4] }}
+                    </div>
+                </div>
+                <div class="bettype">
+                    Draw
+                </div>
+                <div class="box-content-checkout-match">
+                    {{ draw_data.split("|")[1] }} v {{ draw_data.split("|")[2] }}
+                </div>
+                <div class="box-content-checkout-date">
+                    {{ draw_data.split("|")[3] }}
+                </div>
+                {% elif away_data %}
+                    <div class="box-content-checkout-team">
+                        {{ chosen_bet }}
+                        <div class="box-content-checkout-team-odds">
+                            {{ away_data.split("|")[3] }}
+                        </div>
+                    </div>
+                    <div class="bettype">
+                        Win
+                    </div>
+                    <div class="box-content-checkout-match">
+                        {{ chosen_bet }} v {{ away_data.split("|")[1] }}
+                    </div>
+                    <div class="box-content-checkout-date">
+                        {{ away_data.split("|")[2] }}
+                    </div>
+                    {% endif %}
+                    <div class="checkout-form">
+                        <form action="/checkout" method="post">
+                            <input type="hidden" name="hiddenval" value="{{ id }}">
+                            <div class="form-group">
+                                <span><b>&#36;</b></span><input autocomplete="off" autofocus placeholder="Amount" class="form-control" id="amount" name="amount" type="number" min="0.5" step="any" required>
+                            </div>
+                            <div id="payout" class="payout">
+                                <b>Potential Winnings: $</b>0
+                            </div>
+                            <div class="checkout-button">
+                                <button class="btn btn-primary" type="submit">Place Bet</button>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        var odds = '{{ odds_only }}'
+        var amount = document.getElementById("amount")
+        var payout = document.getElementById("payout")
+
+        function calculate() {
+            var one = parseFloat(odds) || 0;
+            var two = parseFloat(amount.value) || 0;
+            payout.innerHTML = "Potential Winnings: $".bold() + (Math.floor((one * two) * 100) / 100);
+        }
+        amount.addEventListener('input', calculate)
+    </script>
+    <style>
+        h1 {
+            font-size: 1.4vw;
+            color: black;
+        }
+        span {
+            z-index: 1;
+        }
+        #futbol {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 0;
+        }
+        .checkout-header {
+            margin: 10px;
+        }
+    </style>
+{% endblock %}

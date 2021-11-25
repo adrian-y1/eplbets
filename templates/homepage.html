@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, minimum-scale=1, width=device-width">
+        <link rel="icon" type="image/png" href="/static/favicon.ico">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+        <link href="/static/styles.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+        <link href="http://fonts.cdnfonts.com/css/arial-rounded-mt-bold" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title>Home</title>
+
+    </head>
+
+    <body>
+        <nav>
+                <a class="logo" href="/index">&#9917epl<span style="color:yellow;font-weight: bold;">bets</span>&#9917</a>
+                <div class="nav-right homepage-nav-right">
+                    <ul class="nav-linkss">
+                        <li><a class="nav-link" href="/register"><button class="btn-register">Join Now</button></a></li>
+                        <li><a class="nav-link" href="/login">Log In</a></li>
+                    </ul>
+                </div>
+        </nav>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <header>
+                {% for category, message in messages %}
+                <div class="{{ category }}" role="alert">
+                    <!-- {{ get_flashed_messages() | join(" ") }} -->
+                    {{ message }}
+                    <i class="close" onclick=delete_flash(this)>&times;</i>
+                    {% endfor %}
+                </div>
+            </header>
+        {% endif %}
+        {% endwith %}
+        <div class="bettingbg">
+            <div class="homepage-header-con-hidden">
+                <div class="homepage-header-hidden">
+                    <h1>EPL <p style="color: yellow;">Bets</p></h1>
+                    <h3>A Premier League Betting Simulator</h3>
+                </div>
+            </div>
+            <div class="actives-hidden">
+                <a href="/register" id="active-hidden">Start Betting</a> <br>
+                <a href="/login" id="active2-hidden">Sign In</a>
+            </div>
+            <div class="homepage-header-con">
+                <div class="homepage-header">
+                    <h1>EPL <p style="color: yellow;">Bets</p></h1>
+                    <h3>A Premier League Betting Simulator</h3>
+                </div>
+            </div>
+            <div class="actives">
+                <a href="/register" id="active">Start Betting</a> <br>
+                <a href="/login" id="active2">Sign In</a>
+            </div>
+            <img src="/static/epl_logo10.png" class="homepage-epl">
+        </div>
+        <main class="container p-5">
+            {% block main %}{% endblock %}
+        </main>
+        <div class="footer">
+            <footer>
+                <p class="footer-p-layout">Data provided for free by <a href="https://serpapi.com/?gclid=CjwKCAiAs92MBhAXEiwAXTi250gOYFMGhpjYIHuaHpi_iLoxLRr40Vjztu4WgpDrHW3BEyiNinIaghoCTiQQAvD_BwE">SerpApi</a> and <a href="https://the-odds-api.com/">The Odds Api</a>. Thank you!</p>
+                <p style="padding-top: 5px;"class="footer-p-layout">The odds provided are from the popular Australian bookmaker, <a href="https://www.sportsbet.com.au/">Sportsbet</a>.</p>
+                <div class="socialmedia">
+                    <a href="https://twitter.com/Y_adrian1" class="fa fa-twitter" target="_blank"></a>
+                    <a href="https://www.instagram.com/adrian_yonan1/" class="fa fa-instagram" target="_blank"></a>
+                    <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.snapchat.com%2Fadd%2Fadrianyonan%3Ffbclid%3DIwAR1ENCIBh0OzcpXtuVtOj9u-Cj1Ys9JaSDbcSF4DDranIUyKTQiQGojEm4E&h=AT34I_o5m1E1ew--Jx1fNwy9t6WInU_6YPLLer1NGbRT7z_kkrbDrps-ueONNXM1admnxp6uNVrzhZ5Sf1u5yZ6nhh6V5E-qEsqA7QcXOicwEei1uCJ4Cy-djw4_3mv9oR1oZA" class="fa fa-snapchat-ghost" target="_blank"></a>
+                </div>
+                <a href="https://discordapp.com/users/244605817276334080/" class="fab fa-discord"></a>
+            </footer>
+        </div>
+
+
+    </body>
+
+</html>
+
+

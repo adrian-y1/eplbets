@@ -1,0 +1,2 @@
+-- SQLite
+INSERT INTO resultstwo (id, home_team_results, away_team_results, home_team_score, away_team_score, results_date)  SELECT id, home_team, away_team, home_team_score, away_team_score, results_date FROM results;

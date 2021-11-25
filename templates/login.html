@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Log in
+{% endblock %}
+
+{% block main %}
+
+    <div class="loginbg">
+        <div class="loginbox">
+            <div class="loginbox-inside">
+                <img src="static/avatar5.png" class="avatar">
+                <h1>Login</h1>
+                    <form action="/login" method="post">
+                        <div class="input-con">
+                            <i class="fa fa-user icon"></i>
+                            <input autocomplete="off" class="input-field" autofocus  name="username" placeholder="Username" type="text" required>
+                        </div>
+                        <div class="input-con">
+                            <i class="fa fa-lock icon"></i>
+                            <input name="password" class="input-field" placeholder="Password" type="password" required>
+                        </div>
+                        <div class="login-button">
+                            <button type="submit">Login</button><br>
+                            <a href="/password">Forgot your password?</a><br>
+                        </div>
+                        <footer>
+                            <div class="login-footer">
+                                <p>Not a member? </p> <a href="/register"> Sign Up</a>
+                            </div>
+                        </footer>
+                    </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
