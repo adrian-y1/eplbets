@@ -12,7 +12,7 @@ import argparse
 import os
 import requests
 from serpapi import GoogleSearch
-from cs50 import SQL
+
 
 api_keyy = os.environ.get("api_keyy")
 params = {
@@ -101,8 +101,8 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-conn = SQL(os.environ.get("DATABASE_URL")) 
-
+conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+c = conn.cursor()
 
 ''' -------------------- THIS IS THE ODDS API'S GAMES INSERTING INTO THE DATABASE --------------------'''
 team_map = {
@@ -141,18 +141,23 @@ for game in odds_response.json():
             matches.append([{"start_date": game["commence_time"].split("T")[0]}, bookmaker["markets"][0]["outcomes"]])
 
 for match in matches:
-    rows = conn.execute("SELECT id FROM games WHERE home_team = ? AND away_team = ? AND date = ?", match[1][0]["name"], match[1][1]["name"], match[0]["start_date"])
-    
-    conn.execute("UPDATE games SET home_team_odds = ? WHERE home_team = ? AND away_team = ? AND date = ?", match[1][0]["price"], match[1][0]["name"], match[1][1]["name"], match[0]["start_date"])
-    conn.execute("UPDATE games SET away_team_odds = ? WHERE home_team = ? AND away_team = ? AND date = ?", match[1][1]["price"], match[1][0]["name"], match[1][1]["name"], match[0]["start_date"])
-    conn.execute("UPDATE games SET draw_odds = ? WHERE home_team = ? AND away_team = ? AND date = ?", match[1][2]["price"], match[1][0]["name"], match[1][1]["name"], match[0]["start_date"])
+    c.execute("SELECT id FROM games WHERE home_team = ? AND away_team = ? AND date = ?", (match[1][0]["name"], match[1][1]["name"], match[0]["start_date"]))
+    rows = c.fetchall()
+
+    c.execute("UPDATE games SET home_team_odds = ? WHERE home_team = ? AND away_team = ? AND date = ?", (match[1][0]["price"], match[1][0]["name"], match[1][1]["name"], match[0]["start_date"]))
+    conn.commit()
+    c.execute("UPDATE games SET away_team_odds = ? WHERE home_team = ? AND away_team = ? AND date = ?", (match[1][1]["price"], match[1][0]["name"], match[1][1]["name"], match[0]["start_date"]))
+    conn.commit()
+    c.execute("UPDATE games SET draw_odds = ? WHERE home_team = ? AND away_team = ? AND date = ?", (match[1][2]["price"], match[1][0]["name"], match[1][1]["name"], match[0]["start_date"]))
+    conn.commit()
 
     match[1][:-1].sort(key=lambda team: team["name"])
     
     values = (match[1][0]["name"], match[1][1]["name"], match[1][2]["name"], match[1][0]["price"], match[1][1]["price"], match[1][2]["price"], match[0]["start_date"])
 
     if len(rows) == 0:
-        conn.execute("INSERT INTO games (home_team, away_team, draw, home_team_odds, away_team_odds, draw_odds, date) VALUES(?, ?, ?, ?, ?, ?, ?)", (values))
+        c.execute("INSERT INTO games (home_team, away_team, draw, home_team_odds, away_team_odds, draw_odds, date) VALUES(?, ?, ?, ?, ?, ?, ?)", (values))
+        conn.commit()
 
 ''' -------------------- THIS IS THE SERPAPI'S RESULTS INSERTING INTO THE DATABASE --------------------'''
 results_matches = []
@@ -180,8 +185,8 @@ for outcomes in results["sports_results"]["games"]:
 
         results_matches.append([{"begin_date": date.isoformat()}, outcomes["teams"]])
 
-
-games_rows = conn.execute("SELECT home_team, away_team, date, id FROM games")
+c.execute("SELECT home_team, away_team, date, id FROM games")
+games_rows = c.fetchall()
 
 for game_row in games_rows:
 
@@ -202,49 +207,52 @@ for game_row in games_rows:
         if set(games_teams) == set(results_teams) and game_row[2] == results_outcome[0]["begin_date"] or set(games_teams) == set(results_teams) and game_row[2] == ((a+b).strftime(f)) or set(games_teams) == set(results_teams) and game_row[2] == ((a-b).strftime(f)):
             print("FOUND")
 
-            results_date_compare = conn.execute("SELECT home_team_results, away_team_results, home_team_score, away_team_score FROM results WHERE home_team_results = ? AND away_team_results = ? AND home_team_score = ? AND away_team_score = ?", (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[1][0]["score"], results_outcome[1][1]["score"]))
+            c.execute("SELECT home_team_results, away_team_results, home_team_score, away_team_score FROM results WHERE home_team_results = ? AND away_team_results = ? AND home_team_score = ? AND away_team_score = ?", (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[1][0]["score"], results_outcome[1][1]["score"]))
+            results_date_compare = c.fetchall()
             comparison = (results_outcome[1][0]["name"], results_outcome[1][1]["name"], int(results_outcome[1][0]["score"]), int(results_outcome[1][1]["score"]))
             
-            
-            results_days_compare = conn.execute("SELECT results_date FROM results WHERE home_team_results = ? AND away_team_results = ? AND home_team_score = ? AND away_team_score = ? ", (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[1][0]["score"], results_outcome[1][1]["score"]))
+            c.execute("SELECT results_date FROM results WHERE home_team_results = ? AND away_team_results = ? AND home_team_score = ? AND away_team_score = ? ", (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[1][0]["score"], results_outcome[1][1]["score"]))
+            results_days_compare = c.fetchall()
             if results_days_compare:
                 days_before = datetime.strptime(results_days_compare[0][0], f)
                 days_after = timedelta(days=15)
 
-            
-            results_rows = conn.execute("SELECT id FROM results WHERE home_team_results = ? AND away_team_results = ? AND results_date = ?", (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[0]["begin_date"]))
+            c.execute("SELECT id FROM results WHERE home_team_results = ? AND away_team_results = ? AND results_date = ?", (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[0]["begin_date"]))
+            results_rows = c.fetchall()
             results_values = (results_outcome[1][0]["name"], results_outcome[1][1]["name"], results_outcome[1][0]["score"], results_outcome[1][1]["score"], results_outcome[0]["begin_date"], game_row[3], status)
 
             if len(results_rows) == 0:
                 if comparison in results_date_compare and days_before.date() > days_before.date() + days_after or comparison not in results_date_compare:
                     print("inserted")
-                    conn.execute("INSERT INTO results (home_team_results, away_team_results, home_team_score, away_team_score, results_date, game_id, status) VALUES(?, ?, ?, ?, ?, ?, ?)", (results_values))
+                    c.execute("INSERT INTO results (home_team_results, away_team_results, home_team_score, away_team_score, results_date, game_id, status) VALUES(?, ?, ?, ?, ?, ?, ?)", (results_values))
+                    conn.commit()
 
 @app.route("/index")
 @login_required
 def index():
-    # conn = SQL(os.environ.get("DATABASE_URL")) 
+    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    c = conn.cursor()
 
     # Display User Cash and Username on the Navbar
-    
-    layout_user = conn.execute("SELECT username FROM users WHERE id = ?", (session["user_id"], ))
+    c.execute("SELECT username FROM users WHERE id = ?", (session["user_id"], ))
+    layout_user = c.fetchone()
     session["username"] = layout_user[0]
 
-    
-    layout_balance = conn.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+    c.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+    layout_balance = c.fetchone()
     session["balance"] = layout_balance[0]
     
-    
-    history_rows_index = conn.execute("SELECT bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, h_results_id, id FROM history WHERE username_id = ?", (session["user_id"],))
+    c.execute("SELECT bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, h_results_id, id FROM history WHERE username_id = ?", (session["user_id"],))
+    history_rows_index = c.fetchall()
 
-    
-    history_rows = conn.execute("SELECT bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, r.home_team_results, r.away_team_results, r.home_team_score, away_team_score, status, h.id FROM history h JOIN results r ON r.id = h.h_results_id and h.username_id = ?", (session["user_id"],))
+    c.execute("SELECT bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, r.home_team_results, r.away_team_results, r.home_team_score, away_team_score, status, h.id FROM history h JOIN results r ON r.id = h.h_results_id and h.username_id = ?", (session["user_id"],))
+    history_rows = c.fetchall()
     
     pending_bet = True
     winner = False
  
-    
-    balance = conn.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+    c.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+    balance = c.fetchall()
     total = 0
     for history in history_rows:
         if history[8] == 0:
@@ -257,12 +265,12 @@ def index():
                     winner = True
                     pending_bet = False
                     total_balance = total + balance[0][0]
-                    conn.execute("UPDATE users SET cash = ? WHERE id = ?", (round(total_balance, 2), session["user_id"]))
-                    
-                    conn.execute("UPDATE history SET winner = 1 WHERE winner = 0 AND home_team_history = ? AND away_team_history = ? AND match_date = ? AND potential_payout = ? AND id = ? AND username_id = ?", (history[5], history[6], history[7], history[4], history[14], session["user_id"]))
-                    
-                    conn.execute("UPDATE results SET status = 1 WHERE status = 0 AND home_team_results = ? AND away_team_results = ? AND results_date = ?", (history[9], history[10], history[7]))
-                    
+                    c.execute("UPDATE users SET cash = ? WHERE id = ?", (round(total_balance, 2), session["user_id"]))
+                    conn.commit()
+                    c.execute("UPDATE history SET winner = 1 WHERE winner = 0 AND home_team_history = ? AND away_team_history = ? AND match_date = ? AND potential_payout = ? AND id = ? AND username_id = ?", (history[5], history[6], history[7], history[4], history[14], session["user_id"]))
+                    conn.commit()
+                    c.execute("UPDATE results SET status = 1 WHERE status = 0 AND home_team_results = ? AND away_team_results = ? AND results_date = ?", (history[9], history[10], history[7]))
+                    conn.commit()
  
             elif history[0] == history[10]:
  
@@ -274,11 +282,12 @@ def index():
                     winner = True
                     pending_bet = False
                     total_balance = total + balance[0][0]
-                    conn.execute("UPDATE users SET cash = ? WHERE id = ?", (round(total_balance, 2), session["user_id"]))
-
-                    conn.execute("UPDATE history SET winner = 1 WHERE winner = 0 AND home_team_history = ? AND away_team_history = ? AND match_date = ? AND potential_payout = ? AND id = ? AND username_id = ?", (history[5], history[6], history[7], history[4], history[14], session["user_id"]))
-
-                    conn.execute("UPDATE results SET status = 1 WHERE status = 0 AND home_team_results = ? AND away_team_results = ? AND results_date = ?", (history[9], history[10], history[7]))
+                    c.execute("UPDATE users SET cash = ? WHERE id = ?", (round(total_balance, 2), session["user_id"]))
+                    conn.commit()
+                    c.execute("UPDATE history SET winner = 1 WHERE winner = 0 AND home_team_history = ? AND away_team_history = ? AND match_date = ? AND potential_payout = ? AND id = ? AND username_id = ?", (history[5], history[6], history[7], history[4], history[14], session["user_id"]))
+                    conn.commit()
+                    c.execute("UPDATE results SET status = 1 WHERE status = 0 AND home_team_results = ? AND away_team_results = ? AND results_date = ?", (history[9], history[10], history[7]))
+                    conn.commit()
  
             elif history[0] == "Draw":
  
@@ -292,12 +301,12 @@ def index():
                     winner = True
                     pending_bet = False
                     total_balance = total + balance[0][0]
-                    conn.execute("UPDATE users SET cash = ? WHERE id = ?", (round(total_balance, 2), session["user_id"]))
-                   
-                    conn.execute("UPDATE history SET winner = 1 WHERE winner = 0 AND home_team_history = ? AND away_team_history = ? AND match_date = ? AND potential_payout = ? AND id = ? AND username_id = ?", (history[5], history[6], history[7], history[4], history[14], session["user_id"]))
-                    
-                    conn.execute("UPDATE results SET status = 1 WHERE status = 0 AND home_team_results = ? AND away_team_results = ? AND results_date = ?", (history[9], history[10], history[7]))
-                    
+                    c.execute("UPDATE users SET cash = ? WHERE id = ?", (round(total_balance, 2), session["user_id"]))
+                    conn.commit()
+                    c.execute("UPDATE history SET winner = 1 WHERE winner = 0 AND home_team_history = ? AND away_team_history = ? AND match_date = ? AND potential_payout = ? AND id = ? AND username_id = ?", (history[5], history[6], history[7], history[4], history[14], session["user_id"]))
+                    conn.commit()
+                    c.execute("UPDATE results SET status = 1 WHERE status = 0 AND home_team_results = ? AND away_team_results = ? AND results_date = ?", (history[9], history[10], history[7]))
+                    conn.commit()
             # run calculation for every user that participated in that match's betting pool
     
         else:
@@ -306,11 +315,11 @@ def index():
             pending_bet = True
             # you already have the result for this match for this user.
 
+    c.execute("SELECT h.home_team_history, h.away_team_history, h.match_date, r.id, r.home_team_results, r.away_team_results, r.results_date FROM history h LEFT OUTER JOIN results r ON h.h_results_id = r.id WHERE r.id IS NULL")
+    history_data = c.fetchall()
     
-    history_data = conn.execute("SELECT h.home_team_history, h.away_team_history, h.match_date, r.id, r.home_team_results, r.away_team_results, r.results_date FROM history h LEFT OUTER JOIN results r ON h.h_results_id = r.id WHERE r.id IS NULL")
-    
-    
-    history_results = conn.execute("SELECT id, home_team_results, away_team_results, results_date FROM results")
+    c.execute("SELECT id, home_team_results, away_team_results, results_date FROM results")
+    history_results = c.fetchall()
     
     results_id = 0
     for j in history_data:
@@ -328,7 +337,8 @@ def index():
                 results_id = k[0]
                 print(results_id)
                 print("RESULTS ID HAVE BEEN FOUND")
-                conn.execute("UPDATE history SET h_results_id = ? WHERE home_team_history = ? AND away_team_history = ? AND match_date = ? AND username_id = ?", (results_id, j[0], j[1], j[2], session["user_id"]))
+                c.execute("UPDATE history SET h_results_id = ? WHERE home_team_history = ? AND away_team_history = ? AND match_date = ? AND username_id = ?", (results_id, j[0], j[1], j[2], session["user_id"]))
+                conn.commit()
                 
     return render_template("index.html", balance=balance, history_rows=history_rows, history_rows_index=history_rows_index, pending_bet=pending_bet, winner=winner)
 
@@ -345,17 +355,18 @@ def soccer():
 
     matches_list = []
 
-    # conn = SQL(os.environ.get("DATABASE_URL")) 
+    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    c = conn.cursor()
 
-    
-    matches_games_db = conn.execute("SELECT g.home_team, g.away_team, g.draw, g.date, g.home_team_odds, g.away_team_odds, g.draw_odds, g.id, r.home_team_results, r.away_team_results, r.results_date FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    c.execute("SELECT g.home_team, g.away_team, g.draw, g.date, g.home_team_odds, g.away_team_odds, g.draw_odds, g.id, r.home_team_results, r.away_team_results, r.results_date FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    matches_games_db = c.fetchall()
 
-    
-    matches_home = conn.execute("SELECT g.home_team, g.away_team, g.date, g.home_team_odds FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
-    
-    matches_away = conn.execute("SELECT g.away_team, g.home_team, g.date, g.away_team_odds FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
-    
-    matches_draw = conn.execute("SELECT g.draw, g.home_team, g.away_team, g.date, g.draw_odds FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    c.execute("SELECT g.home_team, g.away_team, g.date, g.home_team_odds FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    matches_home = c.fetchall()
+    c.execute("SELECT g.away_team, g.home_team, g.date, g.away_team_odds FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    matches_away = c.fetchall()
+    c.execute("SELECT g.draw, g.home_team, g.away_team, g.date, g.draw_odds FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    matches_draw = c.fetchall()
 
     for i in matches_games_db:
         for j in matches:
@@ -419,10 +430,11 @@ def checkout():
 
     matches_list_checkout = []
 
-    # conn = SQL(os.environ.get("DATABASE_URL")) 
+    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    c = conn.cursor()
 
-    
-    matches_checkout = conn.execute("SELECT g.home_team, g.away_team, g.draw, g.date, g.home_team_odds, g.away_team_odds, g.draw_odds, g.id, r.home_team_results, r.away_team_results, r.results_date FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    c.execute("SELECT g.home_team, g.away_team, g.draw, g.date, g.home_team_odds, g.away_team_odds, g.draw_odds, g.id, r.home_team_results, r.away_team_results, r.results_date FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
+    matches_checkout = c.fetchall()
 
     for i in matches_checkout:
         matches_list_checkout.append(i)
@@ -492,15 +504,16 @@ def checkout():
         
         amount = request.form.get("amount")
         
-        
-        rows = conn.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+        c.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+        rows = c.fetchall()
         if rows[0][0] >= float(amount):
             place_bet = rows[0][0] - float(amount)
-            conn.execute("UPDATE users SET cash = ? WHERE id = ?", (round(place_bet, 2), session["user_id"]))
+            c.execute("UPDATE users SET cash = ? WHERE id = ?", (round(place_bet, 2), session["user_id"]))
+            conn.commit()
 
-
-            conn.execute("INSERT INTO history (bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, games_id, username_id) VALUES(?, ?, DATETIME('now', '-1 hours'), ?, ?, ?, ?, ?, ?, ?, ?)",
+            c.execute("INSERT INTO history (bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, games_id, username_id) VALUES(?, ?, DATETIME('now', '-1 hours'), ?, ?, ?, ?, ?, ?, ?, ?)",
             (chosen_bet, float(amount), odds_only, float(amount) * float(odds_only), home_team, away_team, match_date, won, game_id, session["user_id"]))
+            conn.commit()
 
             flash(f"Bet Successfully Placed on {chosen_bet} with {odds_only} odds!", "success")
             return redirect("/index")
@@ -522,7 +535,8 @@ def login():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # conn = SQL(os.environ.get("DATABASE_URL")) 
+        conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+        c = conn.cursor()
 
         username = request.form.get("username")
 
@@ -537,9 +551,9 @@ def login():
             return render_template("login.html")
             
         # Query database for username
-        
-        rows = conn.execute("SELECT * FROM users WHERE username = ?", (username,))
-
+        c.execute("SELECT * FROM users WHERE username = ?", (username,))
+        rows = c.fetchall()
+        conn.commit()
         r = []
         for row in rows:
             r.append({'id': row[0], 'username': row[1], 'hash': row[2], 'cash': row[3]})
@@ -551,8 +565,8 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0][0]
-        
-        user = conn.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],))
+        c.execute("SELECT username FROM users WHERE id = ?", (session["user_id"],))
+        user = c.fetchone()
         # Redirect user to home page
         flash(f"Welcome, {user[0]}!", "success")
         return redirect("/index")
@@ -571,7 +585,8 @@ def register():
     
     if request.method == "POST":
 
-        # conn = SQL(os.environ.get("DATABASE_URL")) 
+        conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+        c = conn.cursor()
 
         if not username:
             flash("Must provide username!", "error")
@@ -586,7 +601,8 @@ def register():
             return render_template("register.html")
             
 
-        rows = conn.execute("SELECT username FROM users")
+        rows = c.execute("SELECT username FROM users")
+        conn.commit()
 
         r = []
         for row in rows.fetchall():
@@ -595,7 +611,8 @@ def register():
 
         if username not in r:
 
-            conn.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, generate_password_hash(password)))
+            c.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (username, generate_password_hash(password)))
+            conn.commit()
 
         else:
             flash("Username taken!", "error")
@@ -609,7 +626,8 @@ def register():
 
 @app.route("/password", methods=["GET", "POST"])
 def password():
-    # conn = SQL(os.environ.get("DATABASE_URL")) 
+    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    c = conn.cursor()
 
     if request.method == "POST":
 
@@ -632,16 +650,17 @@ def password():
             flash("Confirmation Field Empty!", "error")
             return redirect("/password")
         
-        
-        username_rows = conn.execute("SELECT username FROM users WHERE username = ?", (np_username,))
-        
-        password_rows = conn.execute("SELECT hash FROM users WHERE username = ?", (np_username,))
+        c.execute("SELECT username FROM users WHERE username = ?", (np_username,))
+        username_rows = c.fetchall()
+        c.execute("SELECT hash FROM users WHERE username = ?", (np_username,))
+        password_rows = c.fetchone()
 
         if len(username_rows) != 1 or check_password_hash(password_rows[0], request.form.get("cpassword")) != True:
             flash("Invalid Username and/or Password!", "error")
             return redirect("/password")
         else:
-            conn.execute("UPDATE users SET hash = ? WHERE username = ?", (generate_password_hash(np), np_username))
+            c.execute("UPDATE users SET hash = ? WHERE username = ?", (generate_password_hash(np), np_username))
+            conn.commit()
         
         flash("Password changed successfully!", "success")
         return redirect("/")
@@ -652,23 +671,25 @@ def password():
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
-    # conn = SQL(os.environ.get("DATABASE_URL")) 
+    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    c = conn.cursor()
 
-    
-    leaderboard_users = conn.execute("SELECT username, cash FROM users ORDER BY cash DESC")
+    c.execute("SELECT username, cash FROM users ORDER BY cash DESC")
+    leaderboard_users = c.fetchall()
 
-    
-    leaderboard_history = conn.execute("SELECT bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, h_results_id, id FROM history WHERE username_id = ?", (session["user_id"],))
+    c.execute("SELECT bet_name, bet_amount, transaction_date, odds, potential_payout, home_team_history, away_team_history, match_date, winner, h_results_id, id FROM history WHERE username_id = ?", (session["user_id"],))
+    leaderboard_history = c.fetchall()
     
     return render_template("leaderboard.html", leaderboard_history=leaderboard_history, leaderboard_users=leaderboard_users)
 
 @app.route("/results")
 @login_required
 def results():
-    # conn = SQL(os.environ.get("DATABASE_URL")) 
+    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    c = conn.cursor()
 
-    
-    results_html = conn.execute("SELECT home_team_results, away_team_results, home_team_score, away_team_score, results_date FROM results ORDER BY results_date DESC")
+    c.execute("SELECT home_team_results, away_team_results, home_team_score, away_team_score, results_date FROM results ORDER BY results_date DESC")
+    results_html = c.fetchall()
 
     return render_template("results.html", results_html=results_html)
 
