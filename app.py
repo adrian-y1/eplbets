@@ -101,7 +101,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+conn = sqlite3.connect("betting.db")
 c = conn.cursor()
 
 ''' -------------------- THIS IS THE ODDS API'S GAMES INSERTING INTO THE DATABASE --------------------'''
@@ -230,7 +230,7 @@ for game_row in games_rows:
 @app.route("/index")
 @login_required
 def index():
-    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    conn = sqlite3.connect("betting.db")
     c = conn.cursor()
 
     # Display User Cash and Username on the Navbar
@@ -355,7 +355,7 @@ def soccer():
 
     matches_list = []
 
-    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    conn = sqlite3.connect("betting.db")
     c = conn.cursor()
 
     c.execute("SELECT g.home_team, g.away_team, g.draw, g.date, g.home_team_odds, g.away_team_odds, g.draw_odds, g.id, r.home_team_results, r.away_team_results, r.results_date FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
@@ -430,7 +430,7 @@ def checkout():
 
     matches_list_checkout = []
 
-    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    conn = sqlite3.connect("betting.db")
     c = conn.cursor()
 
     c.execute("SELECT g.home_team, g.away_team, g.draw, g.date, g.home_team_odds, g.away_team_odds, g.draw_odds, g.id, r.home_team_results, r.away_team_results, r.results_date FROM games g LEFT OUTER JOIN results r ON g.id = r.game_id WHERE r.id is null;")
@@ -535,7 +535,7 @@ def login():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+        conn = sqlite3.connect("betting.db")
         c = conn.cursor()
 
         username = request.form.get("username")
@@ -585,7 +585,7 @@ def register():
     
     if request.method == "POST":
 
-        conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+        conn = sqlite3.connect("betting.db")
         c = conn.cursor()
 
         if not username:
@@ -626,7 +626,7 @@ def register():
 
 @app.route("/password", methods=["GET", "POST"])
 def password():
-    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    conn = sqlite3.connect("betting.db")
     c = conn.cursor()
 
     if request.method == "POST":
@@ -671,7 +671,7 @@ def password():
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
-    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    conn = sqlite3.connect("betting.db")
     c = conn.cursor()
 
     c.execute("SELECT username, cash FROM users ORDER BY cash DESC")
@@ -685,7 +685,7 @@ def leaderboard():
 @app.route("/results")
 @login_required
 def results():
-    conn = sqlite3.connect(os.environ.get("DATABASE_URL"))
+    conn = sqlite3.connect("betting.db")
     c = conn.cursor()
 
     c.execute("SELECT home_team_results, away_team_results, home_team_score, away_team_score, results_date FROM results ORDER BY results_date DESC")
