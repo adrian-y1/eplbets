@@ -68,16 +68,16 @@ odds_response = requests.get(f'https://api.the-odds-api.com/v4/sports/{SPORT}/od
 })
 
 
-# if odds_response.status_code != 200:
-#     print(f'Failed to get odds: status_code {odds_response.status_code}, response body {odds_response.text}')
+if odds_response.status_code != 200:
+    print(f'Failed to get odds: status_code {odds_response.status_code}, response body {odds_response.text}')
 
-# else:
-#     odds_json = odds_response.json()
-#     print('Number of events:', len(odds_json))
+else:
+    odds_json = odds_response.json()
+    # print('Number of events:', len(odds_json))
 
-#     # Check the usage quota
-#     print('Remaining requests', odds_response.headers['x-requests-remaining'])
-#     print('Used requests', odds_response.headers['x-requests-used'])
+    # Check the usage quota
+    print('Remaining requests', odds_response.headers['x-requests-remaining'])
+    print('Used requests', odds_response.headers['x-requests-used'])
 
 
 
@@ -162,6 +162,7 @@ for match in matches:
 ''' -------------------- THIS IS THE SERPAPI'S RESULTS INSERTING INTO THE DATABASE --------------------'''
 results_matches = []
 for outcomes in results["sports_results"]["games"]:
+    print(outcomes)
     if outcomes["status"] == "FT":
         input_date = outcomes["date"]
         input_with_year = f"{input_date} {datetime.today().year}"
