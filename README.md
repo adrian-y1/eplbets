@@ -1,4 +1,5 @@
 # **EPLBETS - CS50x Final Project 2021**
+# Video URL: https://www.youtube.com/watch?v=_X2h9CsC9Lk&ab_channel=AdrianYonan
 ### Eplbets is an English Premier League betting app that lets you place bets on upcoming games. 
 ### Navigate [here](http://adriann.pythonanywhere.com/) to explore it and start betting!
 ### There are several different pages in Eplbets and they are: 
